@@ -33,10 +33,11 @@ void print_instruction(Instruction inst) {
   printf("%s src=%d dst=%d imm=%d\n", instruction_names[inst.op], inst.src, inst.dst, inst.immediate);
 }
 
-void execute(int * memory, int * registers) {
+void execute(__int32 * memory, int * registers) {
   Instruction inst = ((Instruction*)memory)[registers[IP]];
 
   while (inst.op != Halt) {
+    //print_instruction(inst);
     if (inst.op == LoadImmediate) {
       registers[inst.dst] = inst.immediate;
     } else if (inst.op == Jump) {
@@ -70,9 +71,9 @@ void execute(int * memory, int * registers) {
     registers[IP]++;
     inst = ((Instruction*)memory)[registers[IP]];
   }
+  //printf("%c\n", memory[100]);
 }
-
-void assemble(char* code, int *memory) {
+void assemble(char* code, __int32 *memory) {
   Instruction * instruction;
 
   char tokens[4][16];
@@ -338,7 +339,7 @@ int main() {
   FILE * f = fopen("test-program.asm", "r");
   fread(program, 1, 10000, f);
 
-  int memory[256];
+  __int32 memory[256];
       
   memset(memory, 0, sizeof(memory));
   memset(registers, 0, sizeof(registers));
