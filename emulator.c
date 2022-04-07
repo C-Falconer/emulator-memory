@@ -63,9 +63,9 @@ void execute(__int32 * memory, int * registers) {
     } else if (inst.op == StoreDirect) {
       memory[inst.immediate] = registers[inst.src];
     } else if (inst.op == LoadIndirect) {
-      registers[inst.dst] = memory[inst.src];
+      registers[inst.dst] = memory[registers[inst.src]];
     } else if (inst.op == StoreIndirect) {
-      memory[inst.dst] = registers[inst.src];
+      memory[registers[inst.dst]] = registers[inst.src];
     }
 
     registers[IP]++;
