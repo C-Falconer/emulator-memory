@@ -27,3 +27,5 @@ StoreDirect r1, 103
 ; Jump out when y is back to 0
 BranchOnEqual r0, r4, 20
 Jump 0
+
+Halt 

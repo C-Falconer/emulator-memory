@@ -17,4 +17,4 @@ LoadIndirect r1, r4
 AddImmediate r1, r1, 1
 LoadImmediate r4, 104
 StoreIndirect r4, r1
-Halt
+Halt 

@@ -29,4 +29,4 @@ Jump 5
 
 ; Finish (instruction 13)
 Move r0, r2
-Halt
+Halt 

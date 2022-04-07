@@ -33,7 +33,7 @@ void print_instruction(Instruction inst) {
   printf("%s src=%d dst=%d imm=%d\n", instruction_names[inst.op], inst.src, inst.dst, inst.immediate);
 }
 
-void execute(int32_t * memory, int * registers) {
+void execute(int * memory, int * registers) {
   Instruction inst = ((Instruction*)memory)[registers[IP]];
 
   while (inst.op != Halt) {
@@ -57,6 +57,14 @@ void execute(int32_t * memory, int * registers) {
       registers[inst.dst] = registers[inst.src] ^ registers[inst.dst];
     } else if (inst.op == AddImmediate) {
       registers[inst.dst] = registers[inst.src] + inst.immediate;
+    } else if (inst.op == LoadDirect) {
+      registers[inst.dst] = memory[inst.immediate];
+    } else if (inst.op == StoreDirect) {
+      memory[inst.immediate] = registers[inst.src];
+    } else if (inst.op == LoadIndirect) {
+      registers[inst.dst] = memory[inst.src];
+    } else if (inst.op == StoreIndirect) {
+      memory[inst.dst] = registers[inst.src];
     }
 
     registers[IP]++;
@@ -64,7 +72,7 @@ void execute(int32_t * memory, int * registers) {
   }
 }
 
-void assemble(char* code, int32_t *memory) {
+void assemble(char* code, int *memory) {
   Instruction * instruction;
 
   char tokens[4][16];
@@ -80,13 +88,13 @@ void assemble(char* code, int32_t *memory) {
     line = strtok(NULL, "\n");
 
     // Handle comments and blank lines
-    if (tokens[0][0] == ';' || tokens[0][0] == '\n') {
+    if (tokens[0][0] == ';' || tokens[0][0] == '\n' || tokens[0][0] == '\r' || tokens[0][0] == '\0') {
       continue;
     }
 
     // If we reach this point, We are expecting a valid instruction
     instruction = (Instruction*)(memory + current_instruction);
-    instruction->op = Invalid;
+    instruction->op = Invalid; 
 
     // Process opcode
     for (int i = 0; i<Invalid; i++) {
@@ -95,8 +103,8 @@ void assemble(char* code, int32_t *memory) {
       }
     }
 
-    if (instruction->op == Invalid) {
-      printf("Invalid opcode for instruction %d\n", current_instruction);
+    if (instruction->op == Invalid) { 
+      printf("Invalid opcode for instruction %d code:%d\n", current_instruction, instruction->op);
       exit(1);
     }
 
@@ -330,7 +338,7 @@ int main() {
   FILE * f = fopen("test-program.asm", "r");
   fread(program, 1, 10000, f);
 
-  int32_t memory[256];
+  int memory[256];
       
   memset(memory, 0, sizeof(memory));
   memset(registers, 0, sizeof(registers));
@@ -375,6 +383,8 @@ int main() {
   registers[R0] = 20;
   execute(memory, registers);
   test_int_equal(registers[R0], 6765);
+
+
 
   printf("Memory Test\n");
 
